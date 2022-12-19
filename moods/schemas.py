@@ -1,10 +1,11 @@
 from typing import  Union
 from pydantic import BaseModel
 
-class ItemBase(BaseModel):
-    title: str
-    description: Union[str, None] = None
+class MoodCreate(BaseModel):
+    mood: str
+    geolocation: str
 
-
-class ItemCreate(ItemBase):
-    pass
+class MoodResponse(MoodCreate):
+    mood: str
+    geolocation: str
+    user_id: int

@@ -1,11 +1,13 @@
 from sqlalchemy.orm import Session
 
-import moods.models as models, moods.schemas as schemas
+from moods.models import Mood
+from moods.schemas import MoodResponse
 
-def create_mood(db: Session, mood: schemas.Mood):
-    db_mood = models.mood(mood=mood.mood, geolocation=mood.geolocation, \
-        user_id = 1 )
+
+def create_mood(db: Session, mood_schema: MoodResponse):
+    db_mood = Mood(mood=mood_schema.mood, geolocation=mood_schema.geolocation, \
+        user_id = mood_schema.user_id )
     db.add(db_mood)
     db.commit()
     db.refresh(db_mood)
-    return {"id": db_mood.id, "email": db_mood.email}
+    return db_mood

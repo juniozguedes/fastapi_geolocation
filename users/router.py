@@ -1,25 +1,19 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
+from auth_handler import hash_password
 from users import schemas, repository
-from database import SessionLocal
 
 from fastapi_jwt_auth import AuthJWT
 from settings import Settings
 
+from deps import get_db
 
-router = APIRouter()
+
+router = APIRouter(prefix='/users')
 
 @AuthJWT.load_config
 def get_config():
     return Settings()
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post('/login')
 def login(user: schemas.UserCreate, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
@@ -27,7 +21,6 @@ def login(user: schemas.UserCreate, Authorize: AuthJWT = Depends(), db: Session 
     if not db_user:
         raise HTTPException(status_code=401,detail="Bad username or password")
 
-    # subject identifier for who this token is for example id or username from database
     access_token = Authorize.create_access_token(subject=user.email)
     return {"access_token": access_token}
 
@@ -40,12 +33,13 @@ def user(Authorize: AuthJWT = Depends()):
     return {"user": current_user}
 
 
-@router.post("/users/", response_model=schemas.UserResponse)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
-    db_user = repository.get_user_by_email(db, email=user.email)
+@router.post("/", response_model=schemas.UserResponse)
+def create_user(user_create: schemas.UserCreate, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
+    db_user = repository.get_user_by_email(db, email=user_create.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    user = repository.create_user(db, user=user)
+    user_create.password = hash_password(user_create.password)
+    user = repository.create_user(db, user=user_create)
 
     token = Authorize.create_access_token(subject=user['email'])
     return schemas.UserResponse(id=user['id'], email=user['email'], token=token)

@@ -18,7 +18,6 @@ app = FastAPI()
 app.include_router(users_router)
 app.include_router(moods_router)
 
-# exception handler for authjwt
 # in production, you can tweak performance using orjson response
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException):
@@ -26,4 +25,3 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
         status_code=exc.status_code,
         content={"detail": exc.message}
     )
-
