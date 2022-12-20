@@ -6,8 +6,8 @@ from moods.schemas import MoodResponse
 
 
 def create_mood(db: Session, mood_schema: MoodResponse):
-    query = Mood(mood=mood_schema.mood, geolocation=mood_schema.geolocation, \
-        user_id = mood_schema.user_id )
+    query = Mood(mood=mood_schema.mood, latitude=mood_schema.latitude, \
+        longitude=mood_schema.longitude, user_id = mood_schema.user_id )
     db.add(query)
     db.commit()
     db.refresh(query)
@@ -26,4 +26,8 @@ def mood_frequency(db: Session, user_id: int):
         .all()
     )
 
+    return query
+
+def get_specific_moods(db: Session, mood_type: str, user_id: int):
+    query = db.query(Mood).filter(Mood.user_id == user_id, Mood.mood == mood_type).all()
     return query
