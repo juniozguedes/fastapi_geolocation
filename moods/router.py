@@ -22,23 +22,17 @@ def get_ip():
 
 def get_user_location():
     ip = get_ip()
-    request_url = 'https://geolocation-db.com/jsonp/'+ip
-    response = requests.get(request_url)
-    result = response.content.decode()
-    result = result.split("(")[1].strip(")")
-    result  = json.loads(result)
-    return result
+    url = f"https://ipapi.co/{ip}/json/"
+    location = requests.get(url)
+    return location.json()
 
 
-def get_places(lat, lng, **kwargs):
-    client = googlemaps.Client(key = "YOUR API")
-    radius = 500 # radius in meters
-    token = None # page token for going to next page of search
-    lat = lat
-    long = lng
-    desirable_places = client.places_nearby(keyword = 'coffee', **kwargs)
-    token = desirable_places['next_page_token'] 
-    return desirable_places
+def get_places(lat, lng):
+    API_KEY = "I AM SECRET"
+    print(lat, lng)
+    url = f"https://places.ls.hereapi.com/places/v1/discover/here?apiKey={API_KEY}&at={lat},{lng}&pretty"
+    desirable_places = requests.get(url)
+    return desirable_places.json()
 
     
 @router.post("/", response_model=schemas.MoodResponse)
@@ -59,3 +53,12 @@ def nearby_places(db: Session = Depends(get_db), Authorize: AuthJWT = Depends())
     location = get_user_location()
     places = get_places(location['latitude'],location['longitude'])
     return places
+
+
+@router.get("/frequency")
+def mood_frequency(db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    current_user = Authorize.get_jwt_subject()
+    current_user = user_repository.get_user_by_email(db, current_user)
+    mood_db = mood_repository.mood_frequency(db, current_user.id)
+    return mood_db
