@@ -1,5 +1,5 @@
-from typing import  Union
 from pydantic import BaseModel, validator
+
 
 class MoodCreate(BaseModel):
     mood: str

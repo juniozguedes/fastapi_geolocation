@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship
-
 from database import Base
+
 
 class Mood(Base):
     __tablename__ = "moods"
