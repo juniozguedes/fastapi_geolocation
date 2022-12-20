@@ -54,3 +54,14 @@ def create_user(
     token = Authorize.create_access_token(subject=user["email"])
     return schemas.UserResponse(
         id=user["id"], email=user["email"], token=token)
+
+
+@router.delete("/users/{user_id}")
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    # Query the database for the user with the specified ID
+    user = repository.get_user(db, user_id)
+    
+    if user is None:
+        return HTTPException(status_code=404, detail="User not found")
+    
+    return repository.delete_user(db, user_id)
