@@ -31,14 +31,6 @@ def login(
     return {"access_token": access_token}
 
 
-@router.get("/current")
-def user(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
-
-    current_user = Authorize.get_jwt_subject()
-    return {"user": current_user}
-
-
 @router.post("/", response_model=schemas.UserResponse)
 def create_user(
     user_create: schemas.UserCreate,
@@ -54,3 +46,12 @@ def create_user(
     token = Authorize.create_access_token(subject=user["email"])
     return schemas.UserResponse(
         id=user["id"], email=user["email"], token=token)
+
+
+@router.delete("/{user_id}")
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    user = repository.get_user(db, user_id)    
+    if user is None:
+        return HTTPException(status_code=404, detail="User not found")
+    
+    return repository.delete_user(db, user_id)

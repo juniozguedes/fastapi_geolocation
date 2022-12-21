@@ -10,3 +10,8 @@ class UserResponse(BaseModel):
     id: int
     email: EmailStr
     token: str
+
+class User(BaseModel):
+    id: int
+    email: EmailStr
+    password: str
