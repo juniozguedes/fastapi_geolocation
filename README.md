@@ -7,10 +7,10 @@ Project Features:
 - Show frequency of mood by user
 - Show the closest place where user was in a happy mood
 - External API usage for places (Here API (https://places.ls.hereapi.com))
-- poetry package manager (the go to package manager for production deploys)
+- poetry package manager
 - Testing with pytest
 
-  Responsabilities and modules isolated by directories following SOLID patterns.
+  Responsabilities and modules isolated by directories following SOLID principles.
 
 ## Requirements
 
