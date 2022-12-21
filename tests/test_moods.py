@@ -36,22 +36,39 @@ def generate_random_password():
     password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     return password
 
+
 # Generate a random email and password
 email = generate_random_email()
 password = generate_random_password()
 
 
-def test_create_login_delete_user():
+def test_mood_integration():
     user = {'email': email, 'password':password}
     #Create user
     response = client.post("http://127.0.0.1:8000/users/", json=user)
     assert response.status_code == 200
-    data = response.json()
+    user_data = response.json()
 
     #Login with created user and get token
     response = client.post("http://127.0.0.1:8000/users/login", json=user)
     assert response.status_code == 200
-    
+    login_response = response.json()
+    token = login_response['access_token']
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {token}'
+    }
+
+    #Call places nearby
+    response = client.get("http://127.0.0.1:8000/moods/places", headers=headers)
+    assert response.status_code == 200
+    #assert response.json().get('items')
+
+    #Call mood frequency route
+    response = client.get("http://127.0.0.1:8000/moods/frequency", headers=headers)
+    assert response.status_code == 200
+
     #Finally delete the created user
-    response = client.delete(f"http://127.0.0.1:8000/users/{data['id']}")
+    response = client.delete(f"http://127.0.0.1:8000/users/{user_data['id']}")
     assert response.status_code == 200
