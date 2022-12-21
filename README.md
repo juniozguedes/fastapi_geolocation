@@ -14,9 +14,9 @@ Project Features:
 
 ## Requirements
 
-Python 3.7+
-pip
-poetry (pip install poetry)
+- Python 3.7+
+- pip
+- poetry (pip install poetry)
 
 ## Installation
 
@@ -127,13 +127,13 @@ GET http://localhost:8000/moods/places
 
 ### Assumptions
 
-I assume that we want to save only the closest place to the geolocation in which the user was happy
-I assume that we want to save all data from the nearby place and not just the title and category
-I tried to use typing on every data Input and Output
-I tried to separate logic and responsabilities in a readable and concise way (using repositories, modules etc...)
-The only free API of nearby places that I found was the "Here API" (https://places.ls.hereapi.com)
-This project could have some improvements before going to production like: Default error messages, logging, proper database scalability... Left out due to time limitations
-I had a lot of fun and learned some new stuff with this challenge, thanks for the opportunity!
+- I assume that we want to save only the closest place to the geolocation in which the user was happy
+- I assume that we want to save all data from the nearby place and not just the title and category
+- I tried to use typing on every data Input and Output
+- I tried to separate logic and responsabilities in a readable and concise way (using repositories, modules etc...)
+- The only free API of nearby places that I found was the "Here API" (https://places.ls.hereapi.com)
+- This project could have some improvements before going to production like: Default error messages, logging, proper database scalability... Left out due to time limitations
+- I had a lot of fun and learned some new stuff with this challenge, thanks for the opportunity!
 
 ## License
 
